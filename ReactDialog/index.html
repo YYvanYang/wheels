@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>rc-dialog animation demo</title>
+    <link rel="stylesheet" href="./ant-design.css">
+    <style>
+        .rc-dialog-content {
+            background: red;
+        }
+    </style>
+</head>
+
+<body>
+    <button onclick="start(event)">start</button>
+    <div tabindex="-1" class="rc-dialog-wrap " role="dialog" style="display: none;">
+        <div id="dialog" role="document" class="rc-dialog " style="width: 600px;  animation-duration: 3s; animation-delay: 0ms;">
+            <div class="rc-dialog-content">
+                <button aria-label="Close" class="rc-dialog-close">
+                    <span class="rc-dialog-close-x"></span>
+                </button>
+                <div class="rc-dialog-body">
+                    <input>
+                    <p>basic modal</p>
+                    <button>change width</button>
+                    <div style="height: 200px;"></div>
+                </div>
+            </div>
+            <div tabindex="0" style="width: 0px; height: 0px; overflow: hidden;">sentinel</div>
+        </div>
+    </div>
+    <script>
+        function getScroll(w, top) {
+            let ret = w[`page${top ? 'Y' : 'X'}Offset`];
+            const method = `scroll${top ? 'Top' : 'Left'}`;
+            if (typeof ret !== 'number') {
+                const d = w.document;
+                ret = d.documentElement[method];
+                if (typeof ret !== 'number') {
+                    ret = d.body[method];
+                }
+            }
+            return ret;
+        }
+
+        function offset(el) {
+            const rect = el.getBoundingClientRect();
+            const pos = {
+                left: rect.left,
+                top: rect.top,
+            };
+            const doc = el.ownerDocument;
+            const w = doc.defaultView || doc.parentWindow;
+            pos.left += getScroll(w);
+            pos.top += getScroll(w, true);
+            return pos;
+        }
+
+        function setTransformOrigin(node, value) {
+            const style = node.style;
+            ['Webkit', 'Moz', 'Ms', 'ms'].forEach((prefix) => {
+                style[`${prefix}TransformOrigin`] = value;
+            });
+            style[`transformOrigin`] = value;
+        }
+
+        function start(event) {
+            let mousePosition = {
+                x: event.pageX,
+                y: event.pageY,
+            }
+            document.getElementsByClassName('rc-dialog-wrap')[0].style.display = ''
+            let dialog = document.getElementById('dialog')
+
+            if (mousePosition) {
+                const elOffset = offset(dialog);
+                setTransformOrigin(dialog,
+                    `${mousePosition.x - elOffset.left}px ${mousePosition.y - elOffset.top}px`);
+            } else {
+                setTransformOrigin(dialog, '');
+            }
+
+            dialog.classList.add('rc-dialog-zoom-enter')
+            dialog.classList.add('rc-dialog-zoom-enter-active')
+        }
+    </script>
+</body>
+
+</html>
