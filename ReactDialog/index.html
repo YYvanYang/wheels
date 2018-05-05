@@ -11,12 +11,25 @@
         .rc-dialog-content {
             background: red;
         }
+
+        .rc-dialog-wrap {
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
     </style>
 </head>
 
 <body>
     <button onclick="start(event)">start</button>
-    <div tabindex="-1" class="rc-dialog-wrap " role="dialog" style="display: none;">
+    <ul id="output"></ul>
+    <label>
+        <input type="checkbox" onchange="goCenter(event)">center</label>
+    <div tabindex="-1" class="rc-dialog-wrap " role="dialog" style="display: none;" onclick="closeDialog(event)">
         <div id="dialog" role="document" class="rc-dialog " style="width: 600px;  animation-duration: 3s; animation-delay: 0ms;">
             <div class="rc-dialog-content">
                 <button aria-label="Close" class="rc-dialog-close">
@@ -67,6 +80,18 @@
             style[`transformOrigin`] = value;
         }
 
+        function goCenter(event) {
+            console.log(event)
+            let checked = event.target.checked
+            console.log(checked)
+            let wrap = document.getElementsByClassName('rc-dialog-wrap')[0]
+            if (checked) {
+                wrap.classList.add('center')
+            } else {
+                wrap.classList.remove('center')
+            }
+        }
+
         function start(event) {
             let mousePosition = {
                 x: event.pageX,
@@ -85,6 +110,36 @@
 
             dialog.classList.add('rc-dialog-zoom-enter')
             dialog.classList.add('rc-dialog-zoom-enter-active')
+
+            dialog.addEventListener("animationstart", listener, false);
+            dialog.addEventListener("animationend", listener, false);
+            dialog.addEventListener("animationiteration", listener, false);
+        }
+
+        function closeDialog(event) {
+            console.log(event.target)
+
+            document.getElementsByClassName('rc-dialog-wrap')[0].style.display = 'none'
+        }
+
+        function listener(e) {
+            let dialog = document.getElementById('dialog')
+
+            var l = document.createElement("li");
+            switch (e.type) {
+                case "animationstart":
+                    l.innerHTML = "Started: elapsed time is " + e.elapsedTime;
+                    break;
+                case "animationend":
+                    l.innerHTML = "Ended: elapsed time is " + e.elapsedTime;
+                    dialog.classList.remove('rc-dialog-zoom-enter')
+                    dialog.classList.remove('rc-dialog-zoom-enter-active')
+                    break;
+                case "animationiteration":
+                    l.innerHTML = "New loop started at time " + e.elapsedTime;
+                    break;
+            }
+            document.getElementById("output").appendChild(l);
         }
     </script>
 </body>
