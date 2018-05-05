@@ -118,8 +118,9 @@
 
         function closeDialog(event) {
             console.log(event.target)
-
-            event.target.style.display = 'none'
+            if (event.target.className.indexOf('rc-dialog-wrap') !== -1) {
+                event.target.style.display = 'none'
+            }
         }
 
         function listener(e) {
