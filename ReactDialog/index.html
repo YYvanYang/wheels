@@ -119,7 +119,7 @@
         function closeDialog(event) {
             console.log(event.target)
 
-            document.getElementsByClassName('rc-dialog-wrap')[0].style.display = 'none'
+            event.target.style.display = 'none'
         }
 
         function listener(e) {
